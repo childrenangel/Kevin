@@ -27,6 +27,35 @@ function requireAuth() {
   return user;
 }
 
+// ── API Logger ────────────────────────────────────────────────
+const _methodColor = {
+  GET:    '#3b82f6',
+  POST:   '#22c55e',
+  PUT:    '#f59e0b',
+  PATCH:  '#f97316',
+  DELETE: '#ef4444',
+};
+
+function _apiLog(method, path, { body, status, response, error } = {}) {
+  const color = _methodColor[method] || '#6b7280';
+  const ok    = !error;
+  const statusColor = ok ? '#22c55e' : '#ef4444';
+
+  console.groupCollapsed(
+    `%c ${method} %c ${path} %c ${status}`,
+    `background:${color};color:#fff;font-weight:bold;padding:2px 8px;border-radius:4px;font-family:monospace`,
+    `color:${color};font-weight:bold;font-family:monospace`,
+    `background:${statusColor};color:#fff;font-size:11px;padding:1px 6px;border-radius:10px;font-family:monospace`
+  );
+  if (body !== undefined)
+    console.log('%c body    ', 'color:#94a3b8;font-weight:bold;font-family:monospace', body);
+  if (response !== undefined)
+    console.log('%c response', 'color:#94a3b8;font-weight:bold;font-family:monospace', response);
+  if (error !== undefined)
+    console.log('%c error   ', 'color:#ef4444;font-weight:bold;font-family:monospace', error);
+  console.groupEnd();
+}
+
 // ── Fetch wrapper con JWT ─────────────────────────────────────
 async function api(path, opts = {}) {
   const token = getToken();
@@ -38,7 +67,6 @@ async function api(path, opts = {}) {
 
   const method = opts.method || 'GET';
   const body = opts.body ? JSON.parse(opts.body) : undefined;
-  console.log(`[API] ${method} ${path}`, ...(body !== undefined ? ['→ params:', body] : []));
 
   const res = await fetch(`${API}${path}`, { ...opts, headers });
 
@@ -49,9 +77,13 @@ async function api(path, opts = {}) {
   }
 
   const data = await res.json();
-  if (!res.ok) throw new Error(data.message || 'Error en la solicitud');
 
-  console.log(`[API] ${method} ${path} ← respuesta:`, data);
+  if (!res.ok) {
+    _apiLog(method, path, { body, status: res.status, error: data.message || 'Error en la solicitud' });
+    throw new Error(data.message || 'Error en la solicitud');
+  }
+
+  _apiLog(method, path, { body, status: res.status, response: data });
   return data;
 }
 
