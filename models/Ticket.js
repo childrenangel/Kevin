@@ -23,11 +23,13 @@ const historySchema = new mongoose.Schema({
 }, { _id: false });
 
 const ticketSchema = new mongoose.Schema({
+  ticketId:             { type: String, unique: true, sparse: true },
   title:                { type: String, required: true, trim: true },
   description:          { type: String, required: true },
   status:               { type: String, enum: ['open','in_progress','resolved','closed'], default: 'open' },
-  category:             { type: String, enum: ['technical','billing','general','appointment'], default: 'general' },
+  category:             { type: String, enum: ['technical','billing','general','appointment','account','appointments','campaigns'], default: 'general' },
   priority:             { type: String, enum: ['low','medium','high','urgent'], default: 'medium' },
+  tags:                 [{ type: String }],
   createdBy:            { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   assignedTo:           { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null },
   relatedAppointmentId: { type: mongoose.Schema.Types.ObjectId, ref: 'Appointment', default: null },
