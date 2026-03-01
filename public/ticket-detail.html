@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ticket — Sistema de Donaciones</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <a href="dashboard.html" class="nav-brand">← Volver al dashboard</a>
+    <div class="nav-right">
+      <span id="navUserName" class="nav-user"></span>
+      <span id="navRoleBadge" class="badge"></span>
+      <button id="logoutBtn" class="btn btn-sm btn-outline">Salir</button>
+    </div>
+  </nav>
+
+  <main class="container">
+
+    <!-- TICKET HEADER -->
+    <div id="ticketHeader" class="ticket-card">
+      <p class="loading-text">Cargando ticket…</p>
+    </div>
+
+    <!-- INFORMACIÓN RELACIONADA (endpoint híbrido) -->
+    <div id="relatedSection" class="card hidden">
+      <h3 class="card-section-title">Cita relacionada</h3>
+      <div id="relatedContent"></div>
+      <p id="relatedMeta" class="meta-text"></p>
+    </div>
+
+    <!-- CAMBIAR ESTADO (ADMIN / AGENT) -->
+    <div id="statusSection" class="card hidden">
+      <h3 class="card-section-title">Cambiar estado</h3>
+      <div class="status-form">
+        <select id="statusSelect">
+          <option value="open">Abierto</option>
+          <option value="in_progress">En progreso</option>
+          <option value="resolved">Resuelto</option>
+          <option value="closed">Cerrado</option>
+        </select>
+        <button id="btnChangeStatus" class="btn btn-primary">Actualizar</button>
+      </div>
+    </div>
+
+    <!-- MENSAJES -->
+    <div class="card">
+      <h3 class="card-section-title">Mensajes</h3>
+      <div id="messagesList" class="messages-list"></div>
+      <form id="formMessage" class="message-form">
+        <input id="msgInput" type="text" placeholder="Escribe un mensaje…" required />
+        <button type="submit" class="btn btn-primary">Enviar</button>
+      </form>
+    </div>
+
+    <!-- HISTORIAL -->
+    <div class="card">
+      <h3 class="card-section-title">Historial de cambios</h3>
+      <div id="historyList" class="history-list"></div>
+    </div>
+
+  </main>
+
+  <script src="js/api.js"></script>
+  <script src="js/ticket-detail.js"></script>
+</body>
+</html>

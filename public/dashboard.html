@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard — Sistema de Donaciones</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <span class="nav-brand">🩸 Sistema de Donaciones</span>
+    <div class="nav-right">
+      <span id="navUserName" class="nav-user"></span>
+      <span id="navRoleBadge" class="badge"></span>
+      <button id="logoutBtn" class="btn btn-sm btn-outline">Salir</button>
+    </div>
+  </nav>
+
+  <!-- MAIN -->
+  <main class="container">
+
+    <!-- TABS -->
+    <div class="tabs" id="tabsContainer"></div>
+
+    <!-- CAMPAIGNS SECTION -->
+    <section id="sec-campaigns" class="section hidden">
+      <div class="section-header">
+        <h2>Campañas activas</h2>
+        <button id="btnNewCampaign" class="btn btn-primary hidden">+ Nueva campaña</button>
+      </div>
+      <div id="campaignsList" class="grid-cards"></div>
+    </section>
+
+    <!-- APPOINTMENTS SECTION -->
+    <section id="sec-appointments" class="section hidden">
+      <div class="section-header">
+        <h2>Citas de donación</h2>
+        <button id="btnNewAppointment" class="btn btn-primary">+ Nueva cita</button>
+      </div>
+      <div id="appointmentsList" class="list-view"></div>
+    </section>
+
+    <!-- TICKETS SECTION -->
+    <section id="sec-tickets" class="section hidden">
+      <div class="section-header">
+        <h2>Tickets de soporte</h2>
+        <button id="btnNewTicket" class="btn btn-primary">+ Nuevo ticket</button>
+      </div>
+      <div id="ticketsList" class="list-view"></div>
+    </section>
+
+    <!-- USERS SECTION (ADMIN only) -->
+    <section id="sec-users" class="section hidden">
+      <div class="section-header">
+        <h2>Usuarios del sistema</h2>
+      </div>
+      <div id="usersList" class="list-view"></div>
+    </section>
+
+  </main>
+
+  <!-- ─── MODAL: Nueva Campaña ─────────────────────────────────────── -->
+  <div id="modalCampaign" class="modal-overlay hidden">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3>Nueva Campaña</h3>
+        <button class="btn-close" data-close="modalCampaign">✕</button>
+      </div>
+      <form id="formCampaign">
+        <div class="field">
+          <label>Título *</label>
+          <input type="text" name="title" required />
+        </div>
+        <div class="field">
+          <label>Descripción</label>
+          <textarea name="description" rows="3"></textarea>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label>Tipo de sangre</label>
+            <select name="bloodType">
+              <option value="ALL">Todos</option>
+              <option value="A+">A+</option><option value="A-">A-</option>
+              <option value="B+">B+</option><option value="B-">B-</option>
+              <option value="AB+">AB+</option><option value="AB-">AB-</option>
+              <option value="O+">O+</option><option value="O-">O-</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Meta de donantes</label>
+            <input type="number" name="targetDonors" min="0" value="0" />
+          </div>
+        </div>
+        <div class="field">
+          <label>Ubicación</label>
+          <input type="text" name="location" />
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label>Fecha inicio *</label>
+            <input type="date" name="startDate" required />
+          </div>
+          <div class="field">
+            <label>Fecha fin *</label>
+            <input type="date" name="endDate" required />
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary">Crear campaña</button>
+          <button type="button" class="btn" data-close="modalCampaign">Cancelar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ─── MODAL: Nueva Cita ─────────────────────────────────────────── -->
+  <div id="modalAppointment" class="modal-overlay hidden">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3>Nueva Cita</h3>
+        <button class="btn-close" data-close="modalAppointment">✕</button>
+      </div>
+      <form id="formAppointment">
+        <div class="field">
+          <label>Campaña (opcional)</label>
+          <select name="campaignId" id="apptCampaignSelect">
+            <option value="">Sin campaña</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Fecha y hora *</label>
+          <input type="datetime-local" name="scheduledDate" required />
+        </div>
+        <div class="field">
+          <label>Tipo de sangre</label>
+          <select name="bloodType">
+            <option value="">Seleccionar</option>
+            <option value="A+">A+</option><option value="A-">A-</option>
+            <option value="B+">B+</option><option value="B-">B-</option>
+            <option value="AB+">AB+</option><option value="AB-">AB-</option>
+            <option value="O+">O+</option><option value="O-">O-</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Notas</label>
+          <textarea name="notes" rows="2"></textarea>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary">Agendar</button>
+          <button type="button" class="btn" data-close="modalAppointment">Cancelar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ─── MODAL: Nuevo Ticket ─────────────────────────────────────── -->
+  <div id="modalTicket" class="modal-overlay hidden">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3>Nuevo Ticket de Soporte</h3>
+        <button class="btn-close" data-close="modalTicket">✕</button>
+      </div>
+      <form id="formTicket">
+        <div class="field">
+          <label>Título *</label>
+          <input type="text" name="title" required />
+        </div>
+        <div class="field">
+          <label>Descripción *</label>
+          <textarea name="description" rows="4" required></textarea>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label>Categoría</label>
+            <select name="category">
+              <option value="general">General</option>
+              <option value="technical">Técnico</option>
+              <option value="billing">Facturación</option>
+              <option value="appointment">Cita</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Prioridad</label>
+            <select name="priority">
+              <option value="low">Baja</option>
+              <option value="medium" selected>Media</option>
+              <option value="high">Alta</option>
+              <option value="urgent">Urgente</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary">Crear ticket</button>
+          <button type="button" class="btn" data-close="modalTicket">Cancelar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="js/api.js"></script>
+  <script src="js/dashboard.js"></script>
+</body>
+</html>
