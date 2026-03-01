@@ -23,6 +23,8 @@
     const password = document.getElementById('password').value;
 
     try {
+      console.log('[API] POST /api/auth/login → params:', { email, password: '***' });
+
       const res = await fetch('/api/auth/login', {
         method:  'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -30,6 +32,7 @@
       });
 
       const data = await res.json();
+      console.log('[API] POST /api/auth/login ← respuesta:', { ...data, token: data.token ? '[JWT]' : undefined });
 
       if (!res.ok) {
         showError(data.message || 'Error al iniciar sesión');

@@ -36,6 +36,10 @@ async function api(path, opts = {}) {
     ...opts.headers
   };
 
+  const method = opts.method || 'GET';
+  const body = opts.body ? JSON.parse(opts.body) : undefined;
+  console.log(`[API] ${method} ${path}`, ...(body !== undefined ? ['→ params:', body] : []));
+
   const res = await fetch(`${API}${path}`, { ...opts, headers });
 
   if (res.status === 401) {
@@ -46,6 +50,8 @@ async function api(path, opts = {}) {
 
   const data = await res.json();
   if (!res.ok) throw new Error(data.message || 'Error en la solicitud');
+
+  console.log(`[API] ${method} ${path} ← respuesta:`, data);
   return data;
 }
 
