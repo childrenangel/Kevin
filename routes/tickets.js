@@ -119,6 +119,24 @@ router.post('/:id/messages', auth, async (req, res) => {
   }
 });
 
+// DELETE /api/tickets/:id
+// USER solo puede eliminar los suyos; ADMIN y AGENT pueden eliminar cualquiera
+router.delete('/:id', auth, async (req, res) => {
+  try {
+    const ticket = await Ticket.findById(req.params.id);
+    if (!ticket) return res.status(404).json({ message: 'Ticket no encontrado' });
+
+    if (req.user.role === 'USER' && ticket.createdBy.toString() !== req.user.id) {
+      return res.status(403).json({ message: 'Acceso denegado' });
+    }
+
+    await ticket.deleteOne();
+    res.json({ message: 'Ticket eliminado correctamente' });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
 // ─────────────────────────────────────────────────────────────────────────────
 // GET /api/tickets/:id/related  — endpoint híbrido
 // Consulta ticket en MongoDB y su cita relacionada (también MongoDB).

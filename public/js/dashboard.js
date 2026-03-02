@@ -167,9 +167,21 @@ function appointmentRow(a) {
     </div>
     <div class="list-row-right">
       ${statusChip(a.status)}
+      <button class="btn btn-sm btn-danger btn-delete-appt" data-id="${a._id}">Eliminar</button>
     </div>
   `;
+  div.querySelector('.btn-delete-appt').addEventListener('click', () => deleteAppointment(a._id));
   return div;
+}
+
+async function deleteAppointment(id) {
+  if (!confirm('¿Eliminar esta cita?')) return;
+  try {
+    await api(`/appointments/${id}`, { method: 'DELETE' });
+    await loadAppointments();
+  } catch (err) {
+    alert('Error: ' + err.message);
+  }
 }
 
 async function populateCampaignSelect() {
@@ -235,12 +247,27 @@ function ticketRow(t) {
     <div class="list-row-right">
       ${statusChip(t.status)}
       <span style="font-size:.75rem;color:#999">${t.messages?.length || 0} msg</span>
+      <button class="btn btn-sm btn-danger btn-delete-ticket" data-id="${t._id}">Eliminar</button>
     </div>
   `;
   div.addEventListener('click', () => {
     window.location.href = `/ticket-detail.html?id=${t._id}`;
   });
+  div.querySelector('.btn-delete-ticket').addEventListener('click', (e) => {
+    e.stopPropagation();
+    deleteTicket(t._id);
+  });
   return div;
+}
+
+async function deleteTicket(id) {
+  if (!confirm('¿Eliminar este ticket?')) return;
+  try {
+    await api(`/tickets/${id}`, { method: 'DELETE' });
+    await loadTickets();
+  } catch (err) {
+    alert('Error: ' + err.message);
+  }
 }
 
 document.getElementById('formTicket').addEventListener('submit', async (e) => {

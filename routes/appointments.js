@@ -55,6 +55,24 @@ router.post('/', auth, async (req, res) => {
   }
 });
 
+// DELETE /api/appointments/:id
+// USER solo puede eliminar las suyas; ADMIN y AGENT pueden eliminar cualquiera
+router.delete('/:id', auth, async (req, res) => {
+  try {
+    const appt = await Appointment.findById(req.params.id);
+    if (!appt) return res.status(404).json({ message: 'Cita no encontrada' });
+
+    if (req.user.role === 'USER' && appt.userId.toString() !== req.user.id) {
+      return res.status(403).json({ message: 'Acceso denegado' });
+    }
+
+    await appt.deleteOne();
+    res.json({ message: 'Cita eliminada correctamente' });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
 // PATCH /api/appointments/:id/status  — ADMIN o AGENT
 router.patch('/:id/status', auth, roles('ADMIN', 'AGENT'), async (req, res) => {
   try {

@@ -124,6 +124,16 @@ function setupStatusChange() {
       alert('Error: ' + err.message);
     }
   });
+
+  document.getElementById('btnDeleteTicket')?.addEventListener('click', async () => {
+    if (!confirm('¿Eliminar este ticket? Esta acción no se puede deshacer.')) return;
+    try {
+      await api(`/tickets/${ticketId}`, { method: 'DELETE' });
+      window.location.href = '/dashboard.html';
+    } catch (err) {
+      alert('Error: ' + err.message);
+    }
+  });
 }
 
 // ══════════════════════════════════════════════════════════════
